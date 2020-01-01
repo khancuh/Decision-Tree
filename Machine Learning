@@ -1,37 +1,27 @@
+import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 import sklearn
-
-df = pd.read_csv('C:\\Users\\Imran\\Desktop\\salary.csv')
-df.head()
-
-inputs = df.drop('salary_more_then_100k',axis='columns')
-target = df['salary_more_then_100k']
-
-target
-
-from sklearn.preprocessing import LabelEncoder
-
-le_company = LabelEncoder()
-le_job = LabelEncoder()
-le_degree = LabelEncoder()
-
-inputs['company_n'] = le_company.fit_transform(inputs['company'])
-inputs['job_n'] = le_company.fit_transform(inputs['job'])
-inputs['degree_n'] = le_company.fit_transform(inputs['degree'])
-inputs.head()
-
-inputs_n = inputs.drop(['company','job','degree'],axis='columns')
-inputs_n
+from sklearn.tree import DecisionTreeRegressor
 
 
-from sklearn import tree
+data = pd.read_csv('C:\\Users\\Imran\\Desktop\\Position_Salaries.csv')
+data
 
-model = tree.DecisionTreeClassifier()
+real_x = data.iloc[:,1:2].values
+real_y = data.iloc[:,2].values
 
-model.fit(inputs_n,target)
+reg = DecisionTreeRegressor(random_state=0)
+reg.fit(real_x,real_y)
 
-model.score(inputs_n,target)
+y_pred = reg.predict([[6]]).reshape(-1,1)
+y_pred
 
-model.predict([[2,1,0]])
-
-model.predict([[2,1,1]])
+x_grid = np.arange(min(real_x), max(real_x),0.01)
+x_grid = x_grid.reshape((len(x_grid),1))
+plt.scatter(real_x,real_y,color = 'red')
+plt.plot(x_grid,reg.predict(x_grid).reshape(-1,1), color='blue')
+plt.title('Decision Tree Regression')
+plt.xlabel('Position')
+plt.ylabel('salary')
+plt.show()
